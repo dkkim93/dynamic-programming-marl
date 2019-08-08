@@ -4,29 +4,22 @@ from gym import spaces
 
 
 class GridworldEnv(gym.Env):
-    def __init__(self, row):
+    def __init__(self, row, n_agent):
         super(GridworldEnv, self).__init__()
 
         self.row = row
-        self.agent_locs = [0. for _ in range(2)]
+        self.agent_locs = [0. for _ in range(n_agent)]
 
         self.observation_space = spaces.Box(low=0., high=1., shape=(1,), dtype=np.float32)
-        self.action_space = spaces.Discrete(2)
-
-        assert len(self.agent_locs) == 2, "Only two agents are supported"
-        assert self.action_space.n == 2, "Only two actions (left/right) are supported"
+        self.action_space = spaces.Discrete(2)  # Right and left
 
     def step(self, actions):
-        if self.agent_locs[0] == 0 and self.agent_locs[-1] == self.row - 1:
-            reward = 1.
-        elif self.agent_locs[-1] == 0 and self.agent_locs[0] == self.row - 1:
-            reward = 1.
-        else:
-            reward = 0.
+        # Get reward
+        reward = self._reward_func()
 
+        # Take step and get next observation
         for i_agent, action in enumerate(actions):
             self._take_action(i_agent, action)
-
         next_observation = self.agent_locs
 
         done = True if reward == 1. else False
@@ -58,3 +51,13 @@ class GridworldEnv(gym.Env):
     
         else:
             raise ValueError("Wrong action")
+
+    def _reward_func(self):
+        """Reward function:
+        - +1 iff two agents are located at both ends
+        - +0 o/w
+        Because the starting end is zero and the other end is always self.row - 1,
+        to check the condition, we can simply sum their location
+        """
+        reward = 1. if np.sum(self.agent_locs) == self.row - 1 else 0.
+        return reward

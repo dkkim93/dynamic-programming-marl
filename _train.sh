@@ -30,5 +30,6 @@ cd $DIR
 python3.6 main.py \
 --env-name "Gridworld-v0" \
 --ep-max-timesteps 500 \
+--estimate-option "naive" \
 --row 11 \
 --prefix ""

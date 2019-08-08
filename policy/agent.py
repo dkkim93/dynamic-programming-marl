@@ -18,7 +18,7 @@ class Agent(PolicyBase):
         if i_agent == 1:
             self.decay_rate = -0.5 / float(self.args.agent1_max_timesteps)
 
-    def select_stochastic_action(self, total_timesteps):
+    def select_stochastic_action(self, timesteps):
         if self.i_agent == 0:
             if np.random.rand() > 0.5:
                 action = np.array([1., 0.])
@@ -26,9 +26,9 @@ class Agent(PolicyBase):
                 action = np.array([0., 1.])
 
         elif self.i_agent == 1:
-            threshold = self.set_threshold(total_timesteps)
+            threshold = self.set_threshold(timesteps)
 
-            if np.random.rand() > threshold:
+            if np.random.rand() < threshold:
                 action = np.array([1., 0.])
             else:
                 action = np.array([0., 1.])
@@ -39,3 +39,14 @@ class Agent(PolicyBase):
         assert not np.isnan(action).any()
 
         return action
+
+    def get_action_prob(self, action, timesteps):
+        if self.i_agent == 0:
+            return 0.5
+
+        elif self.i_agent == 1:
+            threshold = self.set_threshold(timesteps)
+            return threshold if action == 0 else (1. - threshold)
+
+        else:
+            raise ValueError("Only two agents are supported")

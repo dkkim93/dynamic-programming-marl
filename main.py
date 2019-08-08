@@ -4,6 +4,7 @@ import numpy as np
 from misc.utils import set_log, make_env
 from tensorboardX import SummaryWriter
 from policy.agent import Agent
+from misc.vis import vis
 
 
 def main(args):
@@ -36,8 +37,15 @@ def main(args):
     if args.estimate_option == "montecarlo":
         from trainer.montecarlo import train
         table = train(agents=agents, env=env, log=log, tb_writer=tb_writer, args=args)
+    elif args.estimate_option == "naive":
+        from trainer.naive import train
+        table = train(agents=agents, env=env, log=log, tb_writer=tb_writer, args=args)
     else:
         raise NotImplementedError()
+
+    # Save and vis result
+    np.save("./data/" + args.estimate_option + ".npy", table) 
+    vis(table)
 
 
 if __name__ == "__main__":

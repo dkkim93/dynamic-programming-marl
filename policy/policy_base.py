@@ -19,5 +19,4 @@ class PolicyBase(object):
         if total_timesteps > self.args.agent1_max_timesteps:
             return 0.
         else:
-            slope = -0.5 / float(self.args.agent1_max_timesteps)  # TODO don't compute again
-            return slope * total_timesteps + 0.5
+            return self.decay_rate * total_timesteps + 0.5

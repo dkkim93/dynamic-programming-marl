@@ -13,6 +13,8 @@ def main(args):
     # Create directories
     if not os.path.exists("./logs"):
         os.makedirs("./logs")
+    if not os.path.exists("./data"):
+        os.makedirs("./data")
 
     # Set logs
     tb_writer = SummaryWriter('./logs/tb_{0}'.format(args.log_name))

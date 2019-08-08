@@ -15,7 +15,7 @@ class GridworldEnv(gym.Env):
 
     def step(self, actions):
         # Get reward
-        reward = self._reward_func()
+        reward = self.reward_func(self.agent_locs)
 
         # Take step and get next observation
         for i_agent, action in enumerate(actions):
@@ -38,26 +38,48 @@ class GridworldEnv(gym.Env):
         action = np.argmax(action)
 
         if action == 0:  # Left
-            new_loc = self.agent_locs[i_agent] - 1
-            if new_loc < 0:
-                new_loc = 0  # Out of bound
-            self.agent_locs[i_agent] = new_loc
+            next_loc = self.agent_locs[i_agent] - 1
+            if next_loc < 0:
+                next_loc = 0  # Out of bound
+            self.agent_locs[i_agent] = next_loc
     
         elif action == 1:  # Right
-            new_loc = self.agent_locs[i_agent] + 1
-            if new_loc >= self.row:
-                new_loc = self.row - 1  # Out of bound
-            self.agent_locs[i_agent] = new_loc
+            next_loc = self.agent_locs[i_agent] + 1
+            if next_loc >= self.row:
+                next_loc = self.row - 1  # Out of bound
+            self.agent_locs[i_agent] = next_loc
     
         else:
             raise ValueError("Wrong action")
 
-    def _reward_func(self):
+    def transition_func(self, rows, actions):
+        # TODO combine with _take_action
+        next_rows = []
+
+        for row, action in zip(rows, actions):
+            if action == 0:  # Left
+                next_row = row - 1
+                if next_row < 0:
+                    next_row = 0  # Out of bound
+            elif action == 1:  # Right
+                next_row = row + 1
+                if next_row >= self.row:
+                    next_row = self.row - 1  # Out of bound
+            else:
+                raise ValueError("Wrong action")
+
+            next_rows.append(next_row)
+
+        return next_rows
+
+    def reward_func(self, agent_locs):
         """Reward function:
         - +1 iff two agents are located at both ends
         - +0 o/w
-        Because the starting end is zero and the other end is always self.row - 1,
-        to check the condition, we can simply sum their location
         """
-        reward = 1. if np.sum(self.agent_locs) == self.row - 1 else 0.
-        return reward
+        if agent_locs[0] == 0 and agent_locs[1] == self.row - 1:
+            return 1.
+        elif agent_locs[1] == 0 and agent_locs[0] == self.row - 1:
+            return 1.
+        else:
+            return 0.

@@ -16,7 +16,7 @@ class Agent(PolicyBase):
         self.actor_output_dim = self.env.action_space.n
 
         if i_agent == 1:
-            self.decay_rate = -0.5 / float(self.args.agent1_max_timesteps)
+            self.decay_rate = -0.5 / float(self.args.decay_max_timesteps)
 
     def select_stochastic_action(self, timesteps):
         if self.i_agent == 0:

@@ -16,7 +16,7 @@ class PolicyBase(object):
         raise NotImplementedError()
 
     def set_threshold(self, total_timesteps):
-        if total_timesteps > self.args.agent1_max_timesteps:
+        if total_timesteps > self.args.decay_max_timesteps:
             return 0.
         else:
             return self.decay_rate * total_timesteps + 0.5

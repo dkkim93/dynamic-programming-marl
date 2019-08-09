@@ -40,12 +40,19 @@ def main(args):
     elif args.estimate_option == "naive":
         from trainer.naive import train
         table = train(agents=agents, env=env, log=log, tb_writer=tb_writer, args=args)
+    elif args.estimate_option == "ours":
+        from trainer.ours import train
+        table = train(agents=agents, env=env, log=log, tb_writer=tb_writer, args=args)
     else:
-        raise NotImplementedError()
+        raise ValueError("Invalid option")
 
     # Save and vis result
-    np.save("./data/" + args.estimate_option + ".npy", table) 
-    vis(table)
+    save_name = args.estimate_option + "_" + str(args.decay_max_timesteps)
+    if args.estimate_option == "ours":
+        save_name += "_" + str(args.future_max_timesteps)
+    np.save("./data/" + save_name + ".npy", table) 
+
+    # vis(table)
 
 
 if __name__ == "__main__":
@@ -56,8 +63,11 @@ if __name__ == "__main__":
         "--n-agent", default=2, type=int,
         help="Number of agents")
     parser.add_argument(
-        "--agent1-max-timesteps", default=1000, type=int,
+        "--decay-max-timesteps", default=250, type=int,
         help="Maximum timestep for agent1's time-varying policy")
+    parser.add_argument(
+        "--future-max-timesteps", default=5, type=int, 
+        help="Discount factor")
     parser.add_argument(
         "--discount", default=0.99, type=float, 
         help="Discount factor")

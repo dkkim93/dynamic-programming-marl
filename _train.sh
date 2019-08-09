@@ -26,10 +26,33 @@ pip3 install -r requirements.txt
 print_header "Training network"
 cd $DIR
 
-# Begin experiment
 python3.6 main.py \
 --env-name "Gridworld-v0" \
---ep-max-timesteps 500 \
---estimate-option "naive" \
---row 11 \
+--ep-max-timesteps 100 \
+--future-max-timesteps 0 \
+--estimate-option "montecarlo" \
+--decay-max-timesteps 100 \
+--row 9 \
 --prefix ""
+
+python3.6 main.py \
+--env-name "Gridworld-v0" \
+--ep-max-timesteps 100 \
+--future-max-timesteps 0 \
+--estimate-option "naive" \
+--decay-max-timesteps 100 \
+--row 9 \
+--prefix ""
+
+# Begin experiment
+for i in {1..20}
+do
+    python3.6 main.py \
+    --env-name "Gridworld-v0" \
+    --ep-max-timesteps 100 \
+    --future-max-timesteps $i \
+    --estimate-option "ours" \
+    --decay-max-timesteps 100 \
+    --row 9 \
+    --prefix ""
+done

@@ -41,7 +41,8 @@ def main(args):
         from trainer.naive import train
         table = train(agents=agents, env=env, log=log, tb_writer=tb_writer, args=args)
     elif args.estimate_option == "ours":
-        from trainer.ours import train
+        from trainer.ours_mp import train
+        # from trainer.ours import train
         table = train(agents=agents, env=env, log=log, tb_writer=tb_writer, args=args)
     else:
         raise ValueError("Invalid option")
@@ -98,6 +99,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Set log name
-    args.log_name = "env::%s_row::%s_prefix::%s_log" % (args.env_name, args.row, args.prefix)
+    args.log_name = \
+        "env::%s_row::%s_estimate_option::%s_future_max_timesteps::%s" \
+        "ep_max_timesteps::%s_decay_max_timesteps::%s_prefix::%s_log" % (
+            args.env_name, args.row, args.estimate_option, 
+            args.future_max_timesteps, args.ep_max_timesteps, 
+            args.decay_max_timesteps, args.prefix)
 
     main(args=args)

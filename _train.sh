@@ -26,6 +26,7 @@ pip3 install -r requirements.txt
 print_header "Training network"
 cd $DIR
 
+# Begin experiment
 python3.6 main.py \
 --env-name "Gridworld-v0" \
 --ep-max-timesteps 100 \
@@ -44,7 +45,6 @@ python3.6 main.py \
 --row 9 \
 --prefix ""
 
-# Begin experiment
 for i in {1..20}
 do
     python3.6 main.py \
